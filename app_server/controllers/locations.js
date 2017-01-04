@@ -2,7 +2,7 @@
 module.exports.homelist = function(req, res){
   res.render('locations-list', {
     title: 'Melbit | Melbourne Bitcoin Directory', pageHeader: {
-      title: 'Melbit',
+      title: 'm e l b i t',
       strapline: 'Find businesses that accept Bitcoin near you!'
     },
     sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
