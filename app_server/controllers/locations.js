@@ -22,7 +22,7 @@ module.exports.homelist = function(req, res){
       name: 'Little Pixies',
       address: 'Brown Alley 564, Melbourne 3001',
       rating: 4,
-      facilities: ['Pizza', 'No Mas', 'Premium Wifi'],
+      facilities: ['Pizza', 'No Mas', 'Premium Gifi'],
       distance: '9500m'
     }]
   });
