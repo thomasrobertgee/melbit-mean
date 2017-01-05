@@ -1,6 +1,6 @@
 var mongoose = require( 'mongoose' );
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost/Melbit';
+var dbURI = 'mongodb://127.0.0.1:27017';
 mongoose.connect(dbURI);
 
 mongoose.connection.on('connected', function () {
