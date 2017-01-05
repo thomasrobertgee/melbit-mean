@@ -8,19 +8,19 @@ module.exports.homelist = function(req, res){
     sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
     locations: [{
       name: 'Higher Ground',
-      address: '123 Little Bourke Street, Melbourne 3000',
+      address: '650 Little Bourke Street, Melbourne 3000',
       rating: 5,
       facilities: ['Hot Drinks', 'Food', 'Premium Wifi'],
       distance: '100m'
     },{
-      name: 'Burger King',
-      address: '123 Fake Street, Cherry Town 7648',
+      name: 'Tramp Bar',
+      address: '20 King St, Melbourne 3000',
       rating: 2,
       facilities: ['Hot Drinks', 'Beer', 'Premium Wifi'],
       distance: '2768km'
     },{
-      name: 'Little Pixies',
-      address: 'Brown Alley 564, Melbourne 3001',
+      name: 'The Elephant & The Wheelbarrow',
+      address: '94-96 Bourke St, Melbourne 3000',
       rating: 4,
       facilities: ['Pizza', 'No Mas', 'Premium Gifi'],
       distance: '9500m'
