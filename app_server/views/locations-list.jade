@@ -8,9 +8,9 @@ block content
       .col-lg-6
         h1.text-center= pageHeader.title
           h4.text-center #{pageHeader.strapline}
-
   .row
     .col-xs-12.col-sm-8
+      .error= message
       .row.list-group
         each location in locations
           .col-xs-12.list-group-item
@@ -23,6 +23,6 @@ block content
             p
               each facility in location.facilities
                 span.label.label-warning= facility
-                | &nbsp;
+                &nbsp;
     .col-xs-12.col-sm-4
       p.lead.text-center= sidebar

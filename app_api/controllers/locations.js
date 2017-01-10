@@ -1,3 +1,10 @@
+// var request = require('request');
+// var apiOptions = {
+//   server : "http://localhost:3000"
+// };
+// if (process.env.NODE_ENV === 'production') {
+//   apiOptions.server = "https://murmuring-garden-62590.herokuapp.com"
+// }
 var mongoose = require('mongoose');
 var Loc = mongoose.model('Location');
 
@@ -21,19 +28,72 @@ var theEarth = (function() {
     getDistanceFromRads : getDistanceFromRads,
     getRadsFromDistance : getRadsFromDistance
   };
-}) ();
+})();
 
-// var locationSchema = new mongoose.Schema({
-//   name: {type: String, required: true},
-//   address: String,
-//   rating: {type: Number, "default": 0, min: 0, max: 5},
-//   facilities: [String],
-//   coords: {type: [Number], index: '2dsphere', required: true},
-//   openingTimes: [openingTimeSchema],
-//   reviews: [reviewSchema]
-// });
+var renderHomepage = function(req, res, responseBody){
+  var message;
+  if (!(responseBody instanceof Array)) {
+    message = "API lookup error";
+    responseBody = [];
+  } else {
+    if (!responseBody.length) {
+      message = "No places found nearby";
+    }
+  }
+  res.render('locations-list', {
+    title: 'Melbit - Find a place that accepts Bitcoin',
+    pageHeader: {
+      title: 'Melbit',
+      strapline: 'Find businesses that accept Bitcoin near you!'
+    },
+    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
+    locations: responseBody,
+    message: message
+  });
+};
+
+module.exports.homelist = function(req, res){
+  var requestOptions, path;
+  path = '/app_api/locations';
+  requestOptions = {
+    url : apiOptions.server + path,
+    method : "GET",
+    json : {},
+    qs : {
+      lng : 144.963056,
+      lat : -37.813611,
+      maxDistance : 20
+    }
+  };
+  request(
+    requestOptions,
+    function(err, response, body) {
+      var i, data;
+      data = body;
+      if (response.statusCode === 200 && data.length) {
+        for (i=0; i<data.length; i++) {
+          data[i].distance = _formatDistance(data[i].distance);
+        }
+      }
+      renderHomepage(req, res, data);
+    }
+  );
+
+  var _formatDistance = function (distance) {
+    var numDistance, unit;
+    if (distance > 1) {
+      numDistance = parseFloat(distance) .toFixed(1);
+      unit = 'km';
+    } else {
+      numDistance = parseInt(distance * 100,10);
+      unit = 'm';
+    }
+    return numDistance + unit;
+  }
+};
 
 module.exports.locationsReadOne = function(req, res) {
+  console.log('Finding location details', req.params);
   if (req.params && req.params.locationid) {
     Loc
       .findById(req.params.locationid)
@@ -44,12 +104,15 @@ module.exports.locationsReadOne = function(req, res) {
           });
           return;
         } else if (err) {
+          console.log(err);
           sendJsonResponse(res, 404, err);
           return;
         }
+        console.log(location);
         sendJsonResponse(res, 200, location);
       });
   } else {
+    console.log('No locationid specified');
     sendJsonResponse(res, 404, {
       "message": "No locationid in request"
     });
@@ -68,26 +131,44 @@ module.exports.locationsListByDistance = function(req, res) {
     maxDistance: theEarth.getRadsFromDistance(20),
     num: 10
   };
+  if (!lng || !lat || !maxDistance) {
+    console.log('locationsListByDistance missing params');
+    sendJSONresponse(res, 404, {
+      "message": "lng, lat and maxDistance query parameters are all required"
+    });
+    return;
+  }
   Loc.geoNear(point, geoOptions, function(err, results, stats) {
-    var locations = [];
+    var locations;
+    console.log('Geo Results', results);
+    console.log('Geo stats', stats);
     if (err) {
-      sendJsonResponse(res, 404, err);
+      console.log('geoNear error:', err);
+      sendJSONresponse(res, 404, err);
     } else {
-      results.forEach(function(doc) {
-        locations.push({
-          distance: theEarth.getDistanceFromRads(doc.dis),
-          name: doc.obj.address,
-          rating: doc.obj.rating,
-          facilities: doc.obj.facilities,
-          _id: doc.obj._id
-        });
-      });
-      sendJsonResponse(res, 200, locations);
+      locations = buildLocationList(req, res, results, stats);
+      sendJSONresponse(res, 200, locations);
     }
   });
 };
 
+var buildLocationList = function(req, res, results, stats) {
+  var locations = [];
+  results.forEach(function(doc) {
+    locations.push({
+      distance: theEarth.getDistanceFromRads(doc.dis),
+      name: doc.obj.name,
+      address: doc.obj.address,
+      rating: doc.obj.rating,
+      facilities: doc.obj.facilities,
+      _id: doc.obj._id
+    });
+  });
+  return locations;
+};
+
 module.exports.locationsCreate = function(req, res) {
+  console.log(req.body);
   Loc.create({
     name: req.body.name,
     address: req.body.address,
@@ -106,8 +187,10 @@ module.exports.locationsCreate = function(req, res) {
     }]
   }, function(err, location) {
     if (err) {
+      console.log(err);
       sendJsonResponse(res, 400, err);
     } else {
+      console.log(location);
       sendJsonResponse(res, 201, location);
     }
   });
@@ -169,9 +252,11 @@ module.exports.locationsDeleteOne = function(req, res) {
       .exec(
         function(err, location) {
           if (err) {
+            console.log(err);
             sendJsonResponse(res, 404, err);
             return;
           }
+          console.log("Location id " + locationid + " deleted");
           sendJsonResponse(res, 204, null);
         }
       );

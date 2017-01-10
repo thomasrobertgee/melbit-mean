@@ -9,6 +9,9 @@ a {
 
 .review {
   padding-bottom: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+
 }
 
 .panel-body.review-container {

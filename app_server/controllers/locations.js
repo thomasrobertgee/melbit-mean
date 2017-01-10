@@ -42,7 +42,7 @@ module.exports.locationInfo = function(req, res){
       address: '123 Little Bourke Street, Melbourne 3000',
       rating: 5,
       facilities: ['Hot Drinks', 'Beer', 'Premium Wifi'],
-      coords: {lat: 51.455041, lng: -0.9690884},
+      coords: {lat: -37.815584, lng: 144.953074},
       openingTimes: [{
         days: 'Monday - Friday',
         opening: '7.00am',
@@ -76,6 +76,6 @@ module.exports.locationInfo = function(req, res){
 module.exports.addReview = function(req, res){
   res.render('location-review-form', {
     title: 'Review Higher Ground on Melbit',
-    pageHeader: { title: 'Review Higher Ground'}
+    pageHeader: { title: 'Review Higher Ground' }
   });
 };
