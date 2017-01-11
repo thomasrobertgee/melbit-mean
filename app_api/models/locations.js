@@ -6,6 +6,7 @@ var reviewSchema = new mongoose.Schema({
   reviewText: String,
   createdOn: {type: Date, "default": Date.now}
 });
+
 var openingTimeSchema = new mongoose.Schema({
   days: {type: String, required: true},
   opening: String,
