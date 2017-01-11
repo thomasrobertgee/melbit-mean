@@ -29,47 +29,36 @@ module.exports.homelist = function(req, res){
 };
 
 /* GET 'info' page */
-module.exports.locationInfo = function(req, res){
+var renderDetailPage = function (req, res, locDetail) {
   res.render('location-info', {
-    title: 'Higher Ground',
-    pageHeader: {title: 'Higher Ground'},
+    title: 'locDetail.name',
+    pageHeader: {title: 'locDetail.name'},
     sidebar: {
       context: 'is somewhere to buy coffee with      Bitcoin.',
       callToAction: 'If you\'ve been and you like it, or if you don\'t, please leave a review regardless.'
     },
-    location: {
-      name: 'Higher Ground',
-      address: '123 Little Bourke Street, Melbourne 3000',
-      rating: 5,
-      facilities: ['Hot Drinks', 'Beer', 'Premium Wifi'],
-      coords: {lat: -37.815584, lng: 144.953074},
-      openingTimes: [{
-        days: 'Monday - Friday',
-        opening: '7.00am',
-        closing: '7.00pm',
-        closed: false
-      },{
-        days: 'Saturday',
-        opening: '8.00am',
-        closing: '6.00pm',
-        closed: false
-      },{
-        days: 'Sunday',
-        closed: true
-      }],
-      reviews: [{
-        author: 'Tommy Gee',
-        rating: 5,
-        timestamp: '16 February 2014',
-        reviewText: 'What a great place. I can\'t say enough good things about it.'
-      },{
-        author: 'Baxter Callan',
-        rating: 4,
-        timestamp: '30 June 2014',
-        reviewText: 'Not bad hombre.'
-      }]
-    }
+    location: locDetail
   });
+};
+module.exports.locationInfo = function(req, res) {
+  var requestOptions, path;
+  path = "/api/locations/" + req.params.locationid;
+  requestOptions = {
+    url : apiOptions.server + path,
+    method : "GET",
+    json : {}
+  };
+  request(
+    requestOptions,
+    function(err, response, body) {
+      var data = body;
+      data.coords = {
+        lng : body.coords[0],
+        lat : body.coords[1]
+      };
+      renderDetailPage(req, res, data);
+    }
+  );
 };
 
 /* GET 'Add review' page */
