@@ -6,71 +6,16 @@ if (process.env.NODE_ENV === 'production') {
   apiOptions.server = "https://murmuring-garden-62590.herokuapp.com"
 }
 
-/* GET 'home' page */
-module.exports.homelist = function(req, res){
-  res.render('locations-list', {
-    title: 'Melbit | Melbourne Bitcoin Directory', pageHeader: {
-      title: 'm e l b i t',
-      strapline: 'Find businesses that accept Bitcoin near you!'
-    },
-    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
-    locations: [{
-      name: 'Higher Ground',
-      address: '650 Little Bourke Street, Melbourne 3000',
-      rating: 5,
-      facilities: ['Hot Drinks', 'Food', 'Premium Wifi'],
-      distance: '100m'
-    },{
-      name: 'Tramp Bar',
-      address: '20 King St, Melbourne 3000',
-      rating: 2,
-      facilities: ['Hot Drinks', 'Beer', 'Premium Wifi'],
-      distance: '2768km'
-    },{
-      name: 'The Elephant & The Wheelbarrow',
-      address: '94-96 Bourke St, Melbourne 3000',
-      rating: 4,
-      facilities: ['Pizza', 'No Mas', 'Premium Gifi'],
-      distance: '9500m'
-    }]
-  });
-};
-
-/* GET 'info' page */
-var renderDetailPage = function (req, res, locDetail) {
-  res.render('location-info', {
-    title: 'locDetail.name',
-    pageHeader: {title: 'locDetail.name'},
-    sidebar: {
-      context: 'is somewhere to buy coffee with      Bitcoin.',
-      callToAction: 'If you\'ve been and you like it, or if you don\'t, please leave a review regardless.'
-    },
-    location: locDetail
-  });
-};
-module.exports.locationInfo = function(req, res) {
-  var requestOptions, path;
-  path = "/api/locations/" + req.params.locationid;
-  requestOptions = {
-    url : apiOptions.server + path,
-    method : "GET",
-    json : {}
-  };
-  request(
-    requestOptions,
-    function(err, response, body) {
-      var data = body;
-      if (response.statusCode === 200) {
-      data.coords = {
-        lng : body.coords[0],
-        lat : body.coords[1]
-      };
-      renderDetailPage(req, res, data);
-    } else {
-      _showError(req, res, response.statusCode);
-    }
+var _formatDistance = function (distance) {
+  var numDistance, unit;
+  if (distance > 1) {
+    numDistance = parseFloat(distance).toFixed(1);
+    unit = 'km';
+  } else {
+    numDistance = parseInt(distance * 100,10);
+    unit = 'm';
   }
-  );
+  return numDistance + unit;
 };
 
 var _showError = function (req, res, status) {
@@ -88,10 +33,144 @@ var _showError = function (req, res, status) {
     content : content
   });
 };
+
+var renderHomepage = function(req, res, responseBody){
+  var message;
+  if (!(responseBody instanceof Array)) {
+    message = "API lookup error";
+    responseBody = [];
+  } else {
+    if (!responseBody.length) {
+      message = "No places found nearby";
+    }
+  }
+  res.render('locations-list', {
+    title: 'Melbit - Find a place that accepts Bitcoin',
+    pageHeader: {
+      title: 'Melbit',
+      strapline: 'Find businesses that accept Bitcoin near you!'
+    },
+    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
+    locations: responseBody,
+    message: message
+  });
+};
+
+module.exports.homelist = function(req, res){
+  var requestOptions, path;
+  path = '/app_api/locations';
+  requestOptions = {
+    url : apiOptions.server + path,
+    method : "GET",
+    json : {},
+    qs : {
+      lng : 144.963056,
+      lat : -37.813611,
+      maxDistance : 20
+    }
+  };
+  request(
+    requestOptions,
+    function(err, response, body) {
+      var i, data;
+      data = body;
+      if (response.statusCode === 200 && data.length) {
+        for (i=0; i<data.length; i++) {
+          data[i].distance = _formatDistance(data[i].distance);
+        }
+      }
+      renderHomepage(req, res, data);
+    });
+};
+
+module.exports.locationInfo = function(req, res){
+  getLocationInfo(req, res, function(req, res, responseData) {
+    renderDetailPage(req, res, responseData);
+  });
+};
+
 /* GET 'Add review' page */
 module.exports.addReview = function(req, res){
-  res.render('location-review-form', {
-    title: 'Review Higher Ground on Melbit',
-    pageHeader: { title: 'Review Higher Ground' }
+  getLocationInfo(req, res, function(req, res, responseData) {
+    renderReviewForm(req, res, responseData);
   });
+};
+
+/* GET 'info' page */
+var renderDetailPage = function (req, res, locDetail) {
+  res.render('location-info', {
+    title: locDetail.name,
+    pageHeader: {title: locDetail.name},
+    sidebar: {
+      context: 'is somewhere to buy coffee with      Bitcoin.',
+      callToAction: 'If you\'ve been and you like it, or if you don\'t, please leave a review regardless.'
+    },
+    location: locDetail
+  });
+};
+
+var getLocationInfo = function(req, res) {
+  var requestOptions, path;
+  path = "/api/locations/" + req.params.locationid;
+  requestOptions = {
+    url : apiOptions.server + path,
+    method : "GET",
+    json : {}
+  };
+  request(
+    requestOptions,
+    function(err, response, body) {
+      var data = body;
+      if (response.statusCode === 200) {
+        data.coords = {
+          lng : body.coords[0],
+          lat : body.coords[1]
+        };
+        callback(req, res, data);
+      } else {
+        _showError(req, res, response.statusCode);
+      }
+    }
+  );
+};
+
+var renderReviewForm = function (req, res) {
+  res.render('location-review-form', {
+    title: 'Review' + locDetail.name + ' on Melbit',
+    pageHeader: { title: 'Review' + locDetail.name },
+    error: req.query.err
+  });
+};
+
+module.exports.doAddReview = function(req, res){
+  var requestOptions, path, locationid, postdata;
+  locationid = req.params.locationid;
+  path = "/api/locations/" + locationid + '/reviews';
+  postdata = {
+    author: req.body.name,
+    rating: parseInt(req.body.rating, 10),
+    reviewText: req.body.review
+  };
+  requestOptions = {
+    url : apiOptions.server + path,
+    method : "POST",
+    json : postdata
+  };
+  if (!postdata.author || !postdata.rating || !postdata.reviewText) {
+    res.redirect('/location/' + locationid + '/reviews/new?err=val');
+  } else {
+  request(
+    requestOptions,
+    function(err, response, body) {
+      if (response.statusCode === 201) {
+        res.direct('/location/' + locationid);
+      } else if (response.statusCode === 400 && body.name && body.name === "ValidationError" ) {
+        res.redirect('/location/' + locationid + '/reviews/new?err=val');
+      } else  {
+        console.log(body);
+        _showError(req, res, response.statusCode);
+      }
+    }
+  );
+}
 };

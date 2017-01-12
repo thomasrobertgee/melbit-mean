@@ -23,95 +23,6 @@ var theEarth = (function() {
   };
 })();
 
-var renderHomepage = function(req, res, responseBody){
-  var message;
-  if (!(responseBody instanceof Array)) {
-    message = "API lookup error";
-    responseBody = [];
-  } else {
-    if (!responseBody.length) {
-      message = "No places found nearby";
-    }
-  }
-  res.render('locations-list', {
-    title: 'Melbit - Find a place that accepts Bitcoin',
-    pageHeader: {
-      title: 'Melbit',
-      strapline: 'Find businesses that accept Bitcoin near you!'
-    },
-    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
-    locations: responseBody,
-    message: message
-  });
-};
-
-module.exports.homelist = function(req, res){
-  var requestOptions, path;
-  path = '/app_api/locations';
-  requestOptions = {
-    url : apiOptions.server + path,
-    method : "GET",
-    json : {},
-    qs : {
-      lng : 144.963056,
-      lat : -37.813611,
-      maxDistance : 20
-    }
-  };
-  request(
-    requestOptions,
-    function(err, response, body) {
-      var i, data;
-      data = body;
-      if (response.statusCode === 200 && data.length) {
-        for (i=0; i<data.length; i++) {
-          data[i].distance = _formatDistance(data[i].distance);
-        }
-      }
-      renderHomepage(req, res, data);
-    }
-  );
-
-  var _formatDistance = function (distance) {
-    var numDistance, unit;
-    if (distance > 1) {
-      numDistance = parseFloat(distance) .toFixed(1);
-      unit = 'km';
-    } else {
-      numDistance = parseInt(distance * 100,10);
-      unit = 'm';
-    }
-    return numDistance + unit;
-  }
-};
-
-module.exports.locationsReadOne = function(req, res) {
-  console.log('Finding location details', req.params);
-  if (req.params && req.params.locationid) {
-    Loc
-      .findById(req.params.locationid)
-      .exec(function(err, location) {
-        if (!location) {
-          sendJsonResponse(res, 404, {
-            "message": "locationid not found"
-          });
-          return;
-        } else if (err) {
-          console.log(err);
-          sendJsonResponse(res, 404, err);
-          return;
-        }
-        console.log(location);
-        sendJsonResponse(res, 200, location);
-      });
-  } else {
-    console.log('No locationid specified');
-    sendJsonResponse(res, 404, {
-      "message": "No locationid in request"
-    });
-  }
-};
-
 module.exports.locationsListByDistance = function(req, res) {
   var lng = parseFloat(req.query.lng);
   var lat = parseFloat(req.query.lat);
@@ -158,6 +69,33 @@ var buildLocationList = function(req, res, results, stats) {
     });
   });
   return locations;
+};
+
+module.exports.locationsReadOne = function(req, res) {
+  console.log('Finding location details', req.params);
+  if (req.params && req.params.locationid) {
+    Loc
+      .findById(req.params.locationid)
+      .exec(function(err, location) {
+        if (!location) {
+          sendJsonResponse(res, 404, {
+            "message": "locationid not found"
+          });
+          return;
+        } else if (err) {
+          console.log(err);
+          sendJsonResponse(res, 404, err);
+          return;
+        }
+        console.log(location);
+        sendJsonResponse(res, 200, location);
+      });
+  } else {
+    console.log('No locationid specified');
+    sendJsonResponse(res, 404, {
+      "message": "No locationid in request"
+    });
+  }
 };
 
 module.exports.locationsCreate = function(req, res) {
