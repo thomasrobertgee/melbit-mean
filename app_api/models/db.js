@@ -2,9 +2,9 @@ var mongoose = require( 'mongoose' );
 var gracefulShutdown;
 var dbURI = 'mongodb://localhost:27017';
 if (process.env.NODE_ENV === 'production') {
-  dbURI = process.env.MONGOLAB_URI;
+  dbURI = 'mongodb://thomas:gee@ds155418.mlab.com:55418/heroku_s9z4pj0p';
 }
-// mongodb://thomas:gee@ds155418.mlab.com:55418/heroku_s9z4pj0p
+
 mongoose.connect(dbURI);
 
 mongoose.connection.on('connected', function () {
