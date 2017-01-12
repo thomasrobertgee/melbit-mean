@@ -23,9 +23,11 @@ var theEarth = (function() {
   };
 })();
 
+// GET list of locations
 module.exports.locationsListByDistance = function(req, res) {
   var lng = parseFloat(req.query.lng);
   var lat = parseFloat(req.query.lat);
+  var maxDistance = parseFloat(req.query.maxDistance);
   var point = {
     type: "Point",
     coordinates: [lng, lat]
@@ -71,6 +73,7 @@ var buildLocationList = function(req, res, results, stats) {
   return locations;
 };
 
+// GET a location by the id
 module.exports.locationsReadOne = function(req, res) {
   console.log('Finding location details', req.params);
   if (req.params && req.params.locationid) {
@@ -98,6 +101,8 @@ module.exports.locationsReadOne = function(req, res) {
   }
 };
 
+// POST a new location
+// /api/locations
 module.exports.locationsCreate = function(req, res) {
   console.log(req.body);
   Loc.create({
@@ -127,6 +132,7 @@ module.exports.locationsCreate = function(req, res) {
   });
 };
 
+// PUT /api/locations/:locationid
 module.exports.locationsUpdateOne = function(req, res) {
   if (!req.params.locationid) {
     sendJsonResponse(res, 404, {
@@ -151,8 +157,7 @@ module.exports.locationsUpdateOne = function(req, res) {
         location.name = req.body.name;
         location.address = req.body.address;
         location.facilities = req.body.facilities.split(",");
-        location.coords = [parseFloat(req.body.lng),
-      parseFloat(req.body.lat)];
+        location.coords = [parseFloat(req.body.lng), parseFloat(req.body.lat)];
         location.openingTimes = [{
           days: req.body.opening1,
           opening: req.body.opening1,
@@ -175,6 +180,7 @@ module.exports.locationsUpdateOne = function(req, res) {
     );
 };
 
+// DELETE /api/locations/:locationid
 module.exports.locationsDeleteOne = function(req, res) {
   var locationid = req.params.locationid;
   if (locationid) {

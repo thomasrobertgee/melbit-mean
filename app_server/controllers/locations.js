@@ -6,16 +6,24 @@ if (process.env.NODE_ENV === 'production') {
   apiOptions.server = "https://murmuring-garden-62590.herokuapp.com"
 }
 
+var _isNumeric = function (n) {
+  return !asNan(parseFloat(n)) && isFinite(n);
+};
+
 var _formatDistance = function (distance) {
   var numDistance, unit;
-  if (distance > 1) {
-    numDistance = parseFloat(distance).toFixed(1);
-    unit = 'km';
+  if (distance && _isNumeric(distance)) {
+    if (distance > 1) {
+      numDistance = parseFloat(distance).toFixed(1);
+      unit = 'km';
+    } else {
+      numDistance = parseInt(distance * 100,10);
+      unit = 'm';
+    }
+    return numDistance + unit;
   } else {
-    numDistance = parseInt(distance * 100,10);
-    unit = 'm';
+    return "?";
   }
-  return numDistance + unit;
 };
 
 var _showError = function (req, res, status) {
@@ -23,6 +31,9 @@ var _showError = function (req, res, status) {
   if (status === 404) {
     title = "404, page not found";
     content = "Oh dear. Looks like we can't find this page. Sorry. How about you learn to code and try again";
+  } else if (status === 500) {
+    title = "500, internal server error";
+    content = "How embarrassing. There's a problem with our server."
   } else {
     title = status + ", somthing's gone wrong";
     content = "Something, somewhere, has gone just a little bit wrong.";
@@ -56,6 +67,7 @@ var renderHomepage = function(req, res, responseBody){
   });
 };
 
+// GET 'home page'
 module.exports.homelist = function(req, res){
   var requestOptions, path;
   path = '/app_api/locations';
@@ -80,36 +92,11 @@ module.exports.homelist = function(req, res){
         }
       }
       renderHomepage(req, res, data);
-    });
+    }
+  );
 };
 
-module.exports.locationInfo = function(req, res){
-  getLocationInfo(req, res, function(req, res, responseData) {
-    renderDetailPage(req, res, responseData);
-  });
-};
-
-/* GET 'Add review' page */
-module.exports.addReview = function(req, res){
-  getLocationInfo(req, res, function(req, res, responseData) {
-    renderReviewForm(req, res, responseData);
-  });
-};
-
-/* GET 'info' page */
-var renderDetailPage = function (req, res, locDetail) {
-  res.render('location-info', {
-    title: locDetail.name,
-    pageHeader: {title: locDetail.name},
-    sidebar: {
-      context: 'is somewhere to buy coffee with      Bitcoin.',
-      callToAction: 'If you\'ve been and you like it, or if you don\'t, please leave a review regardless.'
-    },
-    location: locDetail
-  });
-};
-
-var getLocationInfo = function(req, res) {
+var getLocationInfo = function(req, res, callback) {
   var requestOptions, path;
   path = "/api/locations/" + req.params.locationid;
   requestOptions = {
@@ -134,6 +121,25 @@ var getLocationInfo = function(req, res) {
   );
 };
 
+var renderDetailPage = function (req, res, locDetail) {
+  res.render('location-info', {
+    title: locDetail.name,
+    pageHeader: {title: locDetail.name},
+    sidebar: {
+      context: 'is somewhere to buy coffee with      Bitcoin.',
+      callToAction: 'If you\'ve been and you like it, or if you don\'t, please leave a review regardless.'
+    },
+    location: locDetail
+  });
+};
+
+// GET 'location info' page
+module.exports.locationInfo = function(req, res){
+  getLocationInfo(req, res, function(req, res, responseData) {
+    renderDetailPage(req, res, responseData);
+  });
+};
+
 var renderReviewForm = function (req, res) {
   res.render('location-review-form', {
     title: 'Review' + locDetail.name + ' on Melbit',
@@ -142,6 +148,14 @@ var renderReviewForm = function (req, res) {
   });
 };
 
+/* GET 'Add review' page */
+module.exports.addReview = function(req, res){
+  getLocationInfo(req, res, function(req, res, responseData) {
+    renderReviewForm(req, res, responseData);
+  });
+};
+
+// POST 'Add review' page
 module.exports.doAddReview = function(req, res){
   var requestOptions, path, locationid, postdata;
   locationid = req.params.locationid;
