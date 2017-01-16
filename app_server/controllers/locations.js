@@ -3,11 +3,11 @@ var apiOptions = {
   server : "http://localhost:3000"
 };
 if (process.env.NODE_ENV === 'production') {
-  apiOptions.server = "https://murmuring-garden-62590.herokuapp.com"
+  apiOptions.server = "https://murmuring-garden-62590.herokuapp.com";
 }
 
 var _isNumeric = function (n) {
-  return !asNan(parseFloat(n)) && isFinite(n);
+  return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
 var _formatDistance = function (distance) {
@@ -17,7 +17,7 @@ var _formatDistance = function (distance) {
       numDistance = parseFloat(distance).toFixed(1);
       unit = 'km';
     } else {
-      numDistance = parseInt(distance * 100,10);
+      numDistance = parseInt(distance * 1000,10);
       unit = 'm';
     }
     return numDistance + unit;
@@ -45,55 +45,20 @@ var _showError = function (req, res, status) {
   });
 };
 
-var renderHomepage = function(req, res, responseBody){
-  var message;
-  if (!(responseBody instanceof Array)) {
-    message = "API lookup error";
-    responseBody = [];
-  } else {
-    if (!responseBody.length) {
-      message = "No places found nearby";
-    }
-  }
+var renderHomepage = function(req, res){
   res.render('locations-list', {
     title: 'Melbit - Find a place that accepts Bitcoin',
     pageHeader: {
       title: 'Melbit',
       strapline: 'Find businesses that accept Bitcoin near you!'
     },
-    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered.",
-    locations: responseBody,
-    message: message
+    sidebar: "Looking for somewhere to buy coffee with Bitcoin? Look no further, Melbit has you covered."
   });
 };
 
 // GET 'home page'
 module.exports.homelist = function(req, res){
-  var requestOptions, path;
-  path = '/app_api/locations';
-  requestOptions = {
-    url : apiOptions.server + path,
-    method : "GET",
-    json : {},
-    qs : {
-      lng : 144.963056,
-      lat : -37.813611,
-      maxDistance : 20
-    }
-  };
-  request(
-    requestOptions,
-    function(err, response, body) {
-      var i, data;
-      data = body;
-      if (response.statusCode === 200 && data.length) {
-        for (i=0; i<data.length; i++) {
-          data[i].distance = _formatDistance(data[i].distance);
-        }
-      }
-      renderHomepage(req, res, data);
-    }
-  );
+  renderHomepage(req, res);
 };
 
 var getLocationInfo = function(req, res, callback) {
@@ -144,7 +109,8 @@ var renderReviewForm = function (req, res) {
   res.render('location-review-form', {
     title: 'Review' + locDetail.name + ' on Melbit',
     pageHeader: { title: 'Review' + locDetail.name },
-    error: req.query.err
+    error: req.query.err,
+    url: req.originalUrl
   });
 };
 
