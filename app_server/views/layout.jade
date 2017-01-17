@@ -1,17 +1,16 @@
 doctype html
-html(ng-app='melbit')
+html(ng-app='melbitApp')
   head
     meta(name='viewport', content='width=device-width, intitial-scale=1.0')
     title= title
-    link(rel='stylesheet', href=' /bootstrap/css/bootstrap.css')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     .navbar.navbar-default.navbar-fixed-top
       .container
         .navbar-header
           a.navbar-brand(href='/') melbit
-          button.navbar-toggle(type='button', data-toggle='collapse',
-          data-target='#navbar-main')
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='#navbar-main')
             span.icon-bar
             span.icon-bar
             span.icon-bar
@@ -19,17 +18,19 @@ html(ng-app='melbit')
           ul.nav.navbar-nav
             li
               a(href='/about/') About
+
     .container
       div(ng-view)
         block content
-        footer
-          .row
-            .col-xs-12
-              small &copy; Melbit 2016
+
+      footer
+        .row
+          .col-xs-12
+            small &copy; Melbit 2016
 
     script(src='/angular/angular.min.js')
     script(src='/lib/angular-route.min.js')
-    script(src='/angular.melbit.min.js')
+    script(src='/angular/melbit.min.js')
     //- script(src='/app.js')
     //- script(src='/home/home.controller.js')
     //- script(src='/common/services/melbitData.service.js')

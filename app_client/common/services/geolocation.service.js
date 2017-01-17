@@ -3,6 +3,7 @@
   angular
     .module('melbitApp')
     .service('geolocation', geolocation);
+    
   function geolocation () {
     var getPosition = function (cbSuccess, cbError, cbNoGeo) {
       if (navigator.geoloction) {

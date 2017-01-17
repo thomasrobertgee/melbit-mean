@@ -1,6 +1,6 @@
-var mongoose = require( 'mongoose' );
+var mongoose = require('mongoose');
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost:27017';
+var dbURI = 'mongodb://localhost:melbit';
 if (process.env.NODE_ENV === 'production') {
   dbURI = process.env.MONGOLAB_URI;
 }

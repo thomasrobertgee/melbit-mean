@@ -15,6 +15,7 @@
       content: "looking for wifi and a seat and some coffee"
     };
     vm.message = "Checking your location";
+
     vm.getData = function (position) {
       var lat = position.coords.latitude,
           lng = position.coords.longitude;
@@ -23,22 +24,27 @@
         .success(function(data) {
           vm.message = data.length > 0 ? "" : "No location found nearby";
           vm.data = { locations: data };
+          console.log(vm.data);
         })
         .error(function (e) {
-          vm.messahe = "Sorry, something's gone wrong";
+          vm.message = "Sorry, something's gone wrong, please try again later";
         });
     };
+
     vm.showError = function (error) {
       $scope.$apply(function() {
-        vm.mesage = error.message;
+        vm.message = error.message;
       });
     };
+
     vm.noGeo = function () {
       $scope.$apply(function() {
-        v,.message = "Geolocation is not supported by this browser.";
+        vm.message = "Geolocation is not supported by this browser.";
       });
     };
+
     geolocation.getPosition(vm.getData,vm.showError,vm.noGeo);
+
   }
 
 }) ();

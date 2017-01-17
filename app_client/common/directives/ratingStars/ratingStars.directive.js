@@ -2,7 +2,8 @@
 
   angular
     .module('melbitApp')
-    .controller('ratingStars', ratingStars);
+    .directive('ratingStars', ratingStars);
+    
   function ratingStars () {
     return {
       restrict: 'EA',
