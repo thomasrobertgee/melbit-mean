@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+var mongoose = require( 'mongoose' );
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost:melbit';
+var dbURI = 'mongodb://foobar:foobar@ds155418.mlab.com:55418/heroku_s9z4pj0p';
 if (process.env.NODE_ENV === 'production') {
   dbURI = process.env.MONGOLAB_URI;
 }
@@ -44,5 +44,6 @@ process.once('SIGTERM', function () {
     process.exit(0);
   });
 });
+
 
 require('./locations');

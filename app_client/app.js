@@ -14,7 +14,7 @@
         controller: 'aboutCtrl',
         controllerAs: 'vm'
       })
-      .when('/locatoin/:locationid', {
+      .when('/location/:locationid', {
         templateUrl: '/locationDetail/locationDetail.view.html',
         controller: 'locationDetailCtrl',
         controllerAs: 'vm'

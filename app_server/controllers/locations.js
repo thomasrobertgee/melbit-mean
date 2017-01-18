@@ -45,7 +45,7 @@ var _showError = function (req, res, status) {
   });
 };
 
-var renderHomepage = function(req, res){
+var renderHomepage = function(req, res, responseBody){
   res.render('locations-list', {
     title: 'Melbit - Find a place that accepts Bitcoin',
     pageHeader: {
