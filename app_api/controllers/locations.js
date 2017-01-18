@@ -81,21 +81,21 @@ module.exports.locationsReadOne = function(req, res) {
       .findById(req.params.locationid)
       .exec(function(err, location) {
         if (!location) {
-          sendJsonResponse(res, 404, {
+          sendJSONresponse(res, 404, {
             "message": "locationid not found"
           });
           return;
         } else if (err) {
           console.log(err);
-          sendJsonResponse(res, 404, err);
+          sendJSONresponse(res, 404, err);
           return;
         }
         console.log(location);
-        sendJsonResponse(res, 200, location);
+        sendJSONresponse(res, 200, location);
       });
   } else {
     console.log('No locationid specified');
-    sendJsonResponse(res, 404, {
+    sendJSONresponse(res, 404, {
       "message": "No locationid in request"
     });
   }
@@ -124,10 +124,10 @@ module.exports.locationsCreate = function(req, res) {
   }, function(err, location) {
     if (err) {
       console.log(err);
-      sendJsonResponse(res, 400, err);
+      sendJSONresponse(res, 400, err);
     } else {
       console.log(location);
-      sendJsonResponse(res, 201, location);
+      sendJSONresponse(res, 201, location);
     }
   });
 };
@@ -135,7 +135,7 @@ module.exports.locationsCreate = function(req, res) {
 // PUT /api/locations/:locationid
 module.exports.locationsUpdateOne = function(req, res) {
   if (!req.params.locationid) {
-    sendJsonResponse(res, 404, {
+    sendJSONresponse(res, 404, {
       "message": "Not found, locationid is required"
     });
     return;
@@ -146,12 +146,12 @@ module.exports.locationsUpdateOne = function(req, res) {
     .exec(
       function(err, location) {
         if (!location) {
-          sendJsonResponse(res, 404, {
+          sendJSONresponse(res, 404, {
             "message": "locationid not found"
           });
           return;
         } else if (err) {
-          sendJsonResponse(res, 400, err);
+          sendJSONresponse(res, 400, err);
           return;
         }
         location.name = req.body.name;
@@ -171,9 +171,9 @@ module.exports.locationsUpdateOne = function(req, res) {
         }];
         location.save(function(err, location) {
           if (err) {
-            sendJsonResponse(res, 404, err);
+            sendJSONresponse(res, 404, err);
           } else {
-            sendJsonResponse(res, 200, location);
+            sendJSONresponse(res, 200, location);
           }
         });
       }
@@ -190,15 +190,15 @@ module.exports.locationsDeleteOne = function(req, res) {
         function(err, location) {
           if (err) {
             console.log(err);
-            sendJsonResponse(res, 404, err);
+            sendJSONresponse(res, 404, err);
             return;
           }
           console.log("Location id " + locationid + " deleted");
-          sendJsonResponse(res, 204, null);
+          sendJSONresponse(res, 204, null);
         }
       );
     } else {
-      sendJsonResponse(res, 404, {
+      sendJSONresponse(res, 404, {
         "message": "No locationid"
       });
     }

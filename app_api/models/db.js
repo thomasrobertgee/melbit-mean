@@ -1,6 +1,6 @@
 var mongoose = require( 'mongoose' );
 var gracefulShutdown;
-var dbURI = 'mongodb://foobar:foobar@ds155418.mlab.com:55418/heroku_s9z4pj0p';
+var dbURI = 'mongodb://localhost/melbit';
 if (process.env.NODE_ENV === 'production') {
   dbURI = process.env.MONGOLAB_URI;
 }
