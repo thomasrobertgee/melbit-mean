@@ -1,6 +1,6 @@
 (function () {
 
-  angular.module('melbitApp', ['ngRoute', 'ngSanitize']);
+  angular.module('melbitApp', ['ngRoute', 'ngSanitize', 'ui.bootstrap']);
 
   function config ($routeProvider, $locationProvider) {
     $routeProvider
