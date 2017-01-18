@@ -22,7 +22,7 @@
       vm.message = "Searching for nearby places";
       melbitData.locationByCoords(lat, lng)
         .success(function(data) {
-          vm.message = data.length > 0 ? "" : "No location found nearby";
+          vm.message = data.length > 0 ? "" : "No locations found nearby";
           vm.data = { locations: data };
           console.log(vm.data);
         })

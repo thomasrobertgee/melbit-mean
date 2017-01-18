@@ -11,7 +11,7 @@
     };
 
     var locationById = function (locationid) {
-      return $http.get('/api/locations/' + locationdid);
+      return $http.get('/api/locations/' + locationid);
     };
 
     var addReviewById = function (locationid, data) {
