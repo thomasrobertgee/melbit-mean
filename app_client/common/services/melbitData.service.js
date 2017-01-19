@@ -4,8 +4,8 @@
     .module('melbitApp')
     .service('melbitData', melbitData);
 
-  melbitData.$inject = ['$http'];
-  function melbitData ($http) {
+  melbitData.$inject = ['$http', 'authentication'];
+  function melbitData ($http, authentication) {
     var locationByCoords = function (lat, lng) {
       return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=20');
     };
@@ -14,9 +14,12 @@
       return $http.get('/api/locations/' + locationid);
     };
 
-    var addReviewById = function (locationid, data) {
-      return $http.post('/api/locations/' + locationid + '/reviews', data);
-    };
+    var addReviewById = function (locationid, data, {
+      headers: {
+        Authorization: 'Bearer "+ authentication.getToken()"'
+      }
+    });
+  }; 
 
     return {
       locationByCoords : locationByCoords,
