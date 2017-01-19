@@ -4,23 +4,36 @@ var _isNumeric = function (n) {
   return !isNan(parseFloat(n)) && isFinite(n);
 };
 
-var formatDistance = function () {
-  return function (distance) {
-    var numDistance, unit;
-    if (distance && _isNumeric(distance)) {
-      if (distance > 1) {
-        numDistance = parseFloat(distance).toFixed(1);
-        unit = 'km';
-      } else {
-        numDistance = parseInt(distance * 1000,10);
-        unit = 'm';
-      }
-      return numDistance + unit;
-    } else {
-      return "?";
-    }
-  };
+var _formatDistance = function (distance) {
+  var numDistance, unit;
+  if (distance > 1) {
+    numDistance = parseFloat(distance / 1000).toFixed(1);
+    unit = 'km';
+  } else {
+    numDistance = parseInt(distance,10);
+    unit = 'm';
+  }
+  return numDistance + unit;
 };
+
+
+// var formatDistance = function () {
+//   return function (distance) {
+//     var numDistance, unit;
+//     if (distance && _isNumeric(distance)) {
+//       if (distance > 1) {
+//         numDistance = parseFloat(distance).toFixed(1);
+//         unit = 'km';
+//       } else {
+//         numDistance = parseInt(distance * 1000,10);
+//         unit = 'm';
+//       }
+//       return numDistance + unit;
+//     } else {
+//       return "?";
+//     }
+//   };
+// };
 
 var ratingStars = function () {
   return {
@@ -79,7 +92,7 @@ var locationListCtrl = function ($scope, melbitData, geolocation) {
 
 var melbitData = function($http) {
   var locationByCoords = function (lat, lng) {
-    return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=20');
+    return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=1000');
   };
   return {
     locationByCoords : locationByCoords

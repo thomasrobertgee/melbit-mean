@@ -1,4 +1,4 @@
-var mongoose = require( 'mongoose' );
+var mongoose = require('mongoose');
 var gracefulShutdown;
 var dbURI = 'mongodb://localhost/Melbit';
 if (process.env.NODE_ENV === 'production') {
@@ -47,3 +47,4 @@ process.once('SIGTERM', function () {
 
 
 require('./locations');
+require('./users');
