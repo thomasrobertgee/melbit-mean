@@ -61,7 +61,7 @@ module.exports.homelist = function(req, res){
   renderHomepage(req, res);
 };
 
-var getLocationInfo = function(req, res, callback) {
+var getLocationInfo = function (req, res, callback) {
   var requestOptions, path;
   path = "/api/locations/" + req.params.locationid;
   requestOptions = {

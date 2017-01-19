@@ -4,10 +4,14 @@
     .module('melbitApp')
     .controller('locationDetailCtrl', locationDetailCtrl);
 
-  locationDetailCtrl.$inject = ['$routeParams', '$modal', 'melbitData'];
-  function locationDetailCtrl ($routeParams, $modal, melbitData) {
+  locationDetailCtrl.$inject = ['$routeParams', '$location', '$modal', 'melbitData', 'authentication'];
+  function locationDetailCtrl ($routeParams, $location, $modal, melbitData, authentication) {
     var vm = this;
     vm.locationid = $routeParams.locationid;
+
+    vm.isLoggedIn = authentication.isLoggedIn();
+
+    vm.currentPath = $location.path();
 
     melbitData.locationById(vm.locationid)
       .success(function(data) {
@@ -38,6 +42,7 @@
         vm.data.location.reviews.push(data);
       });
     };
+
   }
 
-}) ();
+})();
