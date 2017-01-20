@@ -4,8 +4,8 @@
     .module('melbitApp')
     .service('authentication', authentication);
 
-  authentication.$inject = ['$window'];
-  function authentication ($window) {
+  authentication.$inject = ['$http', '$window'];
+  function authentication ($http, $window) {
 
     var saveToken = function (token) {
       $window.localStorage['melbit-token'] = token;
@@ -13,22 +13,6 @@
 
     var getToken = function () {
       return $window.localStorage['melbit-token'];
-    };
-
-    register = function(user) {
-      return $http.post('/api/register', user).success(function(data){
-        saveToken(data.token);
-      });
-    };
-
-    login = function(user) {
-      return $http.post('/api/login', user).success(function(data) {
-        saveToken(data.token);
-      });
-    };
-
-    logout = function() {
-      $window.localStorage.removeItem('melbit-token');
     };
 
     var isLoggedIn = function() {
@@ -54,9 +38,30 @@
       }
     };
 
+    register = function(user) {
+      return $http.post('/api/register', user).success(function(data){
+        saveToken(data.token);
+      });
+    };
+
+    login = function(user) {
+      return $http.post('/api/login', user).success(function(data) {
+        saveToken(data.token);
+      });
+    };
+
+    logout = function() {
+      $window.localStorage.removeItem('melbit-token');
+    };
+
     return {
+      currentUser : currentUser,
       saveToken : saveToken,
-      getToken : getToken
+      getToken : getToken,
+      isLoggedIn : isLoggedIn,
+      register : register,
+      login : login,
+      logout : logout
     };
   }
 

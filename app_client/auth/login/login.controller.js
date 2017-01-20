@@ -41,5 +41,7 @@
           $location.path(vm.returnPage);
         });
     };
+
   }
+  
 }) ();

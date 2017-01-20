@@ -30,12 +30,12 @@ var _showError = function (req, res, status) {
   var title, content;
   if (status === 404) {
     title = "404, page not found";
-    content = "Oh dear. Looks like we can't find this page. Sorry. How about you learn to code and try again";
+    content = "Oh dear. Looks like we can't find this page. Sorry.";
   } else if (status === 500) {
     title = "500, internal server error";
-    content = "How embarrassing. There's a problem with our server."
+    content = "How embarrassing. There's a problem with our server.";
   } else {
-    title = status + ", somthing's gone wrong";
+    title = status + ", something's gone wrong";
     content = "Something, somewhere, has gone just a little bit wrong.";
   }
   res.status(status);
@@ -105,9 +105,9 @@ module.exports.locationInfo = function(req, res){
   });
 };
 
-var renderReviewForm = function (req, res) {
+var renderReviewForm = function (req, res, locDetail) {
   res.render('location-review-form', {
-    title: 'Review' + locDetail.name + ' on Melbit',
+    title: 'Review ' + locDetail.name + ' on Melbit',
     pageHeader: { title: 'Review' + locDetail.name },
     error: req.query.err,
     url: req.originalUrl
@@ -139,18 +139,18 @@ module.exports.doAddReview = function(req, res){
   if (!postdata.author || !postdata.rating || !postdata.reviewText) {
     res.redirect('/location/' + locationid + '/reviews/new?err=val');
   } else {
-  request(
-    requestOptions,
-    function(err, response, body) {
-      if (response.statusCode === 201) {
-        res.direct('/location/' + locationid);
-      } else if (response.statusCode === 400 && body.name && body.name === "ValidationError" ) {
-        res.redirect('/location/' + locationid + '/reviews/new?err=val');
-      } else  {
-        console.log(body);
-        _showError(req, res, response.statusCode);
+    request(
+      requestOptions,
+      function(err, response, body) {
+        if (response.statusCode === 201) {
+          res.redirect('/location/' + locationid);
+        } else if (response.statusCode === 400 && body.name && body.name === "ValidationError" ) {
+          res.redirect('/location/' + locationid + '/reviews/new?err=val');
+        } else {
+          console.log(body);
+          _showError(req, res, response.statusCode);
+        }
       }
-    }
-  );
-}
+    );
+  }
 };

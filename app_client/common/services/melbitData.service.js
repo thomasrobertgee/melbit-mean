@@ -14,12 +14,13 @@
       return $http.get('/api/locations/' + locationid);
     };
 
-    var addReviewById = function (locationid, data, {
-      headers: {
-        Authorization: 'Bearer "+ authentication.getToken()"'
-      }
-    });
-  }; 
+    var addReviewById = function (locationid, data) {
+      return $http.post('/api/locations/' + locationid + '/reviews', data, {
+        headers: {
+          Authorization: 'Bearer '+ authentication.getToken()
+        }
+      });
+    }; 
 
     return {
       locationByCoords : locationByCoords,

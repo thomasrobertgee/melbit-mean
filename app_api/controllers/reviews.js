@@ -10,6 +10,7 @@ var sendJSONresponse = function(res, status, content) {
 // POST a new review, providing a locationid
 // /api/locations/:locationid/reviews
 module.exports.reviewsCreate = function(req, res) {
+  console.log("Reviewing");
   getAuthor(req, res, function (req, res, userName) {
     if (req.params.locationid) {
       Loc
@@ -20,7 +21,7 @@ module.exports.reviewsCreate = function(req, res) {
             if (err) {
               sendJSONresponse(res, 400, err);
             } else {
-              doAddReview(req, res, location);
+              doAddReview(req, res, location, userName);
             }
           }
       );
@@ -33,7 +34,8 @@ module.exports.reviewsCreate = function(req, res) {
 };
 
 var getAuthor = function(req, res, callback) {
-  if (req.payload && req.payload.email) {
+  console.log("Finding author with email " + req.payload.email);
+  if (req.payload.email) {
     User
       .findOne({ email : req.payload.email })
       .exec(function(err, user) {
@@ -47,6 +49,7 @@ var getAuthor = function(req, res, callback) {
           sendJSONresponse(res, 404, err);
           return;
         }
+        console.log(user);
         callback(req, res, user.name);
       });
   } else {
@@ -84,7 +87,7 @@ var updateAverageRating = function(locationid) {
   console.log("Update rating average for", locationid);
   Loc
     .findById(locationid)
-    .select('rating reviews')
+    .select('reviews')
     .exec(
       function(err, location) {
         if (!err) {
@@ -99,7 +102,7 @@ var doSetAverageRating = function(location) {
     reviewCount = location.reviews.length;
     ratingTotal = 0;
     for (i = 0; i < reviewCount; i++) {
-      ratingTotal = ratingTotal + location.review[i].rating;
+      ratingTotal = ratingTotal + location.reviews[i].rating;
     }
     ratingAverage = parseInt(ratingTotal / reviewCount, 10);
     location.rating = ratingAverage;
@@ -191,10 +194,10 @@ module.exports.reviewsReadOne = function(req, res) {
             } else {
               response = {
                 location: {
-                  name : location.name,
-                  id : req.params.locationid
+                  name: location.name,
+                  id: req.params.locationid
                 },
-                review : review
+                review: review
               };
               sendJSONresponse(res, 200, response);
             }

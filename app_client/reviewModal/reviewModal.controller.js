@@ -4,8 +4,8 @@
     .module('melbitApp')
     .controller('reviewModalCtrl', reviewModalCtrl);
 
-  reviewModalCtrl.$inject = ['$modalInstance', 'locationData'];
-  function reviewModalCtrl ($modalInstance, locationData) {
+  reviewModalCtrl.$inject = ['$modalInstance', 'melbitData', 'locationData'];
+  function reviewModalCtrl ($modalInstance, melbitData, locationData) {
     var vm = this;
     vm.locationData = locationData;
 

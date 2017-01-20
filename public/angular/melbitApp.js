@@ -4,19 +4,6 @@ var _isNumeric = function (n) {
   return !isNan(parseFloat(n)) && isFinite(n);
 };
 
-// var _formatDistance = function (distance) {
-//   var numDistance, unit;
-//   if (distance > 1) {
-//     numDistance = parseFloat(distance / 1000).toFixed(1);
-//     unit = 'km';
-//   } else {
-//     numDistance = parseInt(distance,10);
-//     unit = 'm';
-//   }
-//   return numDistance + unit;
-// };
-
-
 var formatDistance = function () {
   return function (distance) {
     var numDistance, unit;
@@ -37,14 +24,16 @@ var formatDistance = function () {
 
 var ratingStars = function () {
   return {
+    // restrict: 'EA',
     scope: {
       thisRating : '=rating'
     },
-    templateURL: '/angular/rating-stars.html'
+    // template : "{{ thisRating }}"
+    templateUrl: '/angular/rating-stars.html'
   };
 };
 
-var geolocation = function() {
+var geolocation = function () {
   var getPosition = function (cbSuccess, cbError, cbNoGeo) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(cbSuccess, cbError);
@@ -67,9 +56,9 @@ var locationListCtrl = function ($scope, melbitData, geolocation) {
     $scope.message = "Searching for nearby places";
     melbitData.locationByCoords(lat, lng)
       .success(function(data) {
-        $scope.message = data.length > 0 ? "" : "No locations found";
+        $scope.message = data.length > 0 ? "" : "No locations found nearby";
         $scope.data = { locations: data };
-    })
+      })
       .error(function (e) {
         $scope.message = "Sorry, something's gone wrong, please try again later";
       });
@@ -83,16 +72,16 @@ var locationListCtrl = function ($scope, melbitData, geolocation) {
 
   $scope.noGeo = function () {
     $scope.$apply(function() {
-      $scope.message = "Geolocation not supported by this browser.";
+      $scope.message = "Geolocation is not supported by this browser.";
     });
   };
 
   geolocation.getPosition($scope.getData,$scope.showError,$scope.noGeo);
 };
 
-var melbitData = function($http) {
+var melbitData = function ($http) {
   var locationByCoords = function (lat, lng) {
-    return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=1000');
+    return $http.get('/api/locations?lng=' + lng + '&lat=' + lat + '&maxDistance=20');
   };
   return {
     locationByCoords : locationByCoords

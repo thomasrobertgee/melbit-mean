@@ -11,4 +11,5 @@
       controller: 'navigationCtrl as navvm'
     };
   }
+  
 }) ();

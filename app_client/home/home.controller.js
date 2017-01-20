@@ -7,6 +7,7 @@
   homeCtrl.$inject = ['$scope', 'melbitData', 'geolocation'];
   function homeCtrl ($scope, melbitData, geolocation) {
     var vm = this;
+    console.log(window.location);
     vm.pageHeader = {
       title: 'Melbit',
       strapline: 'Find places to spend Bitcoin near you!'

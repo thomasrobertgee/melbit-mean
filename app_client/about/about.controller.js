@@ -2,7 +2,7 @@
 
   angular
     .module('melbitApp')
-    .controller('aboutCtrl', aboutCtrl)
+    .controller('aboutCtrl', aboutCtrl);
 
   function aboutCtrl() {
     var vm = this;

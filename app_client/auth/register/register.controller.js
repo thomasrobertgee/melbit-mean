@@ -42,5 +42,7 @@
           $location.path(vm.returnPage);
         });
     };
+
   }
+
 }) ();
