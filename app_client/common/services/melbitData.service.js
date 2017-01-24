@@ -20,7 +20,7 @@
           Authorization: 'Bearer '+ authentication.getToken()
         }
       });
-    }; 
+    };
 
     return {
       locationByCoords : locationByCoords,
