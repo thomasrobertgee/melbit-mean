@@ -30,7 +30,7 @@
         controllerAs: 'vm'
       })
       .otherwise({redirectTo: '/'});
-      
+
     $locationProvider.html5Mode(true);
   }
 
