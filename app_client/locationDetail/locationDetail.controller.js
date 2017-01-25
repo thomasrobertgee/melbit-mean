@@ -3,8 +3,8 @@ angular
   .module('melbitApp')
   .controller('locationDetailCtrl', locationDetailCtrl);
 
-  locationDetailCtrl.$inject = ['$routeParams', 'melbitData'];
-  function locationDetailCtrl ($routeParams, melbitData) {
+  locationDetailCtrl.$inject = ['$routeParams', 'melbitData', 'authentication'];
+  function locationDetailCtrl ($routeParams, melbitData, authentication) {
     var vm = this;
     vm.locationid = $routeParams.locationid;
 
