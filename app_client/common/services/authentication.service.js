@@ -4,8 +4,8 @@
     .module('melbitApp')
     .service('authentication', authentication);
 
-  authentication.$inject = ['$http', '$window'];
-  function authentication ($http, $window) {
+  authentication.$inject = ['$window', '$http'];
+  function authentication ($window, $http) {
 
     var saveToken = function (token) {
       $window.localStorage['melbit-token'] = token;
