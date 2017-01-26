@@ -11,7 +11,7 @@
       title: 'Contact Us'
     };
     vm.main = {
-      content: 'coming soon!'
+      content: 'Contact form coming soon! In the meantime, send me an email at the below address.'
     };
   }
 
