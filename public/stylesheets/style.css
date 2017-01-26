@@ -33,3 +33,23 @@ a {
 #filter {
   margin-left: 10px;
 }
+
+.btc-widget {
+}
+
+.btc-donate {
+  /*border: 1px solid black;*/
+  margin-top: 5px;
+}
+
+#qrCode {
+  height: 100px;
+  height: 100px;
+  margin-left: 25%;
+}
+
+#sidebar-content {
+}
+
+.contact-email {
+}

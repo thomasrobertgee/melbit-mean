@@ -8,7 +8,7 @@ angular
     var vm = this;
     vm.locationid = $routeParams.locationid;
 
-
+    vm.isLoggedIn = authentication.isLoggedIn();
 
     melbitData.locationById(vm.locationid)
       .success(function(data) {
@@ -35,7 +35,7 @@ angular
         }
       });
 
-      modalInstance.result.then(function (data) {
+      $modalInstance.result.then(function (data) {
         vm.data.location.reviews.push(data);
       });
     };

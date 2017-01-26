@@ -13,7 +13,7 @@
       strapline: 'Find places to spend Bitcoin near you!'
     };
     vm.sidebar = {
-      content: "looking for wifi and a seat and some coffee"
+      content: "Looking for somewhere to grab a coffee and pay with Bitcoin? Look no further, you have found your one-stop directory."
     };
     vm.message = "Checking your location";
 
